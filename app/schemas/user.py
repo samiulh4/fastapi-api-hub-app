@@ -8,7 +8,7 @@ class UserCreate(BaseModel):
     mobile: str
     password: str
     identity: Optional[str] = None
-    avatar: Optional[str] = None
+    avatar_file_id: Optional[str] = None
     gender: Optional[str] = None
 
 class UserResponse(BaseModel):
@@ -17,7 +17,7 @@ class UserResponse(BaseModel):
     email: EmailStr
     mobile: str
     identity: Optional[str] = None
-    avatar: Optional[str] = None
+    avatar_file_id: Optional[str] = None
     gender: Optional[str] = None
 
 class TokenResponse(BaseModel):
