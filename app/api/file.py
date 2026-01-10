@@ -72,4 +72,24 @@ async def file_view(file_id: str):
         file_name=file_record["file_name"],
         file_url=file_record["file_url"],
         file_status=file_record["file_status"]
-    )    
+    )
+
+async def file_status_update(file_id: str, status: str, updated_by: str = None) -> bool:
+    db = get_database()
+    file_collection = db.get_collection("files")
+
+    try:
+        object_id = ObjectId(file_id)
+        result = await file_collection.update_one(
+            {"_id": object_id},
+            {"$set": 
+             {"file_status": status, "updated_by": updated_by, "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+            }
+        )
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error updating file status")
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    return True 

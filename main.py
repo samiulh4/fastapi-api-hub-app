@@ -3,6 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from app.db.mongo import connect_to_mongo, close_mongo_connection
 from app.api.auth import router as auth_router
 from app.api.file import router as file_router
+from app.api.blog import router as blog_router
 
 app = FastAPI(title="FastAPI API Hub App", version="1.0.0")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
@@ -21,4 +22,5 @@ async def read_root():
 
 app.include_router(auth_router)
 app.include_router(file_router)
+app.include_router(blog_router)
 
