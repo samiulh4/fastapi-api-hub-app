@@ -5,6 +5,7 @@ from app.api.auth import get_current_user
 from app.db.mongo import get_database
 from datetime import datetime
 from app.api.file import file_status_update
+from bson import ObjectId
 
 router = APIRouter(prefix="/blog", tags=["Blog"])
 
@@ -29,3 +30,21 @@ async def create_blog(blog: BlogCreate, current_user = Depends(get_current_user)
         return BlogResponse(**blog_dict)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/view/{blog_id}", response_model=BlogResponse)
+async def view_blog_by_id(blog_id: str):
+    
+    if not ObjectId.is_valid(blog_id):
+        raise HTTPException(status_code=400, detail="Invalid blog ID")
+    
+    db = get_database()
+    blog_collection = db.get_collection("blogs")
+    
+    try:
+        blog_record = await blog_collection.find_one({"_id": ObjectId(blog_id)})
+        if not blog_record:
+            raise HTTPException(status_code=404, detail="Blog record not found !")
+        blog_record["id"] = str(blog_record.pop("_id"))
+        return BlogResponse(**blog_record)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))    
